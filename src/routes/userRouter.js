@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
-router.get('/', (req, res) =>{
-     res.status(200).json("Home Router");
-})
+const userController = require('../controllers/userController');
+
+router.post("/create", userController.createUser);
+router.get("/getAll", userController.getAll);
+router.get("/getDetails/:id", userController.getDetail);
 module.exports = router;
