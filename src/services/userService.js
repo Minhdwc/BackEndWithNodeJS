@@ -37,7 +37,7 @@ const getAll = () => {
   return new Promise(async (resolve, reject) => {
     try {
       const allUser = await user.find({});
-      resolve({status:"success", message:"All users found", data: allUser});
+      resolve({ status: "success", message: "All users found", data: allUser });
     } catch (e) {
       reject(e);
     }
@@ -57,9 +57,33 @@ const getDetailService = (id) => {
     }
   });
 };
+const updateUserService = (id, data) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      if (id.length !== 24) {
+        resolve({ status: "error", message: "Invalid id" });
+        return;
+      }
+      const checkUser = await user.findOne({ _id: id });
+      if (!checkUser) {
+        resolve({ status: "error", message: "User not found" });
+        return;
+      }
+      const updateUserService = await user.findByIdAndUpdate(id, data, { new: true });
+      resolve({
+        status: "Success",
+        message: "Update success",
+        data: updateUserService,
+      });
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
 
-module.exports = {  
+module.exports = {
   CreateUserService,
-  getAll, 
-  getDetailService
+  getAll,
+  getDetailService,
+  updateUserService,
 };

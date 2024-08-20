@@ -46,8 +46,22 @@ const getAll = async(req, res)=>{
         return res.status(404).json({message: e.message});
     }
 }
+const updateUser = async(req, res)=>{
+    try{
+        const idUser = req.params.id;
+        const data = req.body;
+        if(!idUser){
+            return res.status(400).json({status: "Error", message:"User is required"});
+        }
+        const respon = await userService.updateUserService(idUser, data);
+        return res.status(200).json(respon);
+    }catch(e){  
+        return res.status(404).json({message: e.message});
+    }
+}
 module.exports={    
     createUser,
     getDetail,
-    getAll
+    getAll,
+    updateUser
 }
