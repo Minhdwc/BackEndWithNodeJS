@@ -1,11 +1,11 @@
 const accessory = require("../models/accessory");
 const createAccessoryService = (data) => {
     return new Promise(async (resolve, reject) => {
-        const { name, categoryAccessory, Price } = data;
+        const { name, categoryAccessory, price } = data;
         const createAccessory = await accessory.create({
             name,
             categoryAccessory,
-            Price,
+            price,
         });
         if (createAccessory) {
             resolve({
