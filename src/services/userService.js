@@ -2,7 +2,7 @@ const user = require("../models/user");
 const bcrypt = require("bcrypt");
 const CreateUserService = (data) => {
   return new Promise(async (resolve, reject) => {
-    const { name, dateOfBirth, email, password, comfirmPassword, role } = data;
+    const { name, dateOfBirth, email, password, comfirmPassword, role, image } = data;
     const checkEmail = await user.findOne({ email: email });
     try {
       if (checkEmail !== null) {

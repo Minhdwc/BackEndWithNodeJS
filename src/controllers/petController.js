@@ -11,6 +11,7 @@ const createPet = async (req, res)=>{
             category: Joi.string().required(),
             size: Joi.object().required(),
             color: Joi.string().required(),
+            image: Joi.string().required(),
         });
         const{error} = schema.validate(req.body);
         if(error){
@@ -62,5 +63,5 @@ module.exports={
     createPet,
     getAllPet,
     deletePet,
-    updatePet
+    updatePet,
 };

@@ -12,7 +12,9 @@ const PetSchema = new Schema({
         width: Number,
         weight: Number
     },
-    color:{type:String}
+    color:{type:String},
+    image:{type: String},
+    display_name_image:{type: String}
 })
 
 const Pet = mongoose.model('Pet', PetSchema);
