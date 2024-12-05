@@ -1,29 +1,34 @@
-const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
-
-const orderSchema = new Schema({
-    customerId: { type: Schema.Types.ObjectId, ref:'user', required: true },
-    date: { type: Date, default:Date.now },
-    status: { type: String },
-    totalPrice: { type: Number },
-    items: {
-        pet: [{
-            id: { type: Schema.Types.ObjectId },
-            quantity: { type: Number },
-            price: { type: Number }
-        }],
-        food: [{
-            id: { type: Schema.Types.ObjectId },
-            quantity: { type: Number },
-            price: { type: Number }
-        }],
-        accessory:[{
-            id: { type: Schema.Types.ObjectId },
-            quantity: { type: Number },
-            price: { type: Number }
-        }]
-    }
-}
-)
-const Order = mongoose.model('Order', orderSchema);
-module.exports=Order;
+const mongoose = require("mongoose");
+const orderSchema = mongoose.Schema({
+	total: { type: number, required: true },
+	quantity: { type: number, required: true },
+	delivery_location: {
+		city: { type: String },
+		district: { type: String },
+		street: { type: String },
+		number_house: { type: String },
+	},
+	type_pay: { type: String },
+	status: {
+		type: String,
+		enum: [
+			"Chưa thanh toán",
+			"Đang thanh toán",
+			"Đã thanh toán",
+			"Đang giao",
+			"Đã giao",
+		],
+		default: "Chưa thanh toán",
+	},
+	item: [
+		{
+			itemType: { type: String, enum: ["Pet", "Product"], required: true },
+			itemId: { type: mongoose.Schema.Types.ObjectId, required: true },
+			quantity: { type: Number, default: 1 },
+			price: { type: Number, required: true },
+		},
+	],
+	timestamp: { type: Date, default: Date.now },
+});
+const Order = mongoose.model("Order", orderSchema);
+module.exports = Order;
