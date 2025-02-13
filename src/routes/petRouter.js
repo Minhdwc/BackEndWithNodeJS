@@ -1,9 +1,7 @@
-const express = require("express");
+const express = require('express')
 const router = express.Router();
-const petController = require("../controllers/petController");
+const petController = require('../Controllers/petController');
 
-router.post("/create", petController.createPet);
-router.get("/getAllPet", petController.getAllPet);
-router.post("/updatePet/:id", petController.updatePet);
-router.delete("/deletePet/:id", petController.deletePet);
+router.post('/create', petController.create);
+
 module.exports = router;

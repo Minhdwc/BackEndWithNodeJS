@@ -5,3 +5,5 @@ const notificationSchema = mongoose.Schema({
 	isRead: { type: boolean },
 	timeStamp: { type: Date, default: Date.now },
 });
+const notification = mongoose.Schema("notification", notificationSchema);
+module.exports = notification;

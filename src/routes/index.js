@@ -1,12 +1,15 @@
-const express = require("express");
-const userRouter = require("./userRouter");
-const petRouter = require("./petRouter");
-const homeRouter = require("./homeRouter");
+const express = require('express')
+const homeRouter = require('./homeRouter');
+const petRouter = require('./petRouter');
+const categoryRouter = require('./categoryRouter');
+const uploadRouter = require('./uploadRouter');
+const multer = require('multer');
 
-const routers = (app) => {
-	app.use("/", homeRouter);
-	app.use("/pet", petRouter);
-	app.use("/user", userRouter);
-};
+const routers = (app)=>{
+    app.use('/home', homeRouter);
+    app.use('/pet', petRouter);
+    app.use('/upload', uploadRouter);
+    app.use('/category', categoryRouter)
+}
 
 module.exports = routers;
