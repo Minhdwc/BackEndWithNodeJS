@@ -1,4 +1,4 @@
-const uploadService = require('../Services/imageServices');
+const uploadService = require('../Services/image.service');
 
 const uploadImage = async (req, res) => {
   try {

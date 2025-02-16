@@ -1,5 +1,5 @@
 const Joi = require('joi');
-const categoryServices = require('../Services/categoryServices');
+const categoryServices = require('../Services/category.service');
 
 const create = async(req, res)=>{
     try{

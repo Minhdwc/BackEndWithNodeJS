@@ -1,5 +1,5 @@
 const Joi = require('joi');
-const petServices = require('../Services/petServices');
+const petServices = require('../Services/pet.service');
 
 const create = async (req, res) => {
     try {        
