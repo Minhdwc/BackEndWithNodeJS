@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+//Giỏ hàng
 const cartSchema = new mongoose.Schema({
 	item: [
 		{

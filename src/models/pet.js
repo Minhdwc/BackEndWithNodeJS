@@ -5,7 +5,7 @@ const PetSchema = new Schema({
 	name: { type: String, required: true },
 	species: { type: String },
 	generic: { type: String },
-	category: { type: mongoose.Schema.Types.ObjectId },
+	categoryId: { type: mongoose.Schema.Types.ObjectId },
 	gender: { type: String },
 	size: {
 		height: Number,

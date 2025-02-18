@@ -47,6 +47,20 @@ const getOne = (id) => {
     reject(e);
   }
 };
+const getByIdUser = (idUser)=>{
+  try{
+    return new Promise(async(resolve, reject)=>{
+      const appointmentUser = await appointment.find({userId: idUser})
+      resolve({
+        status: "Found appointment",
+        data: appointmentUser,
+        message:  "Found appointment"
+      })
+    })
+  }catch(e){
+    reject(e)
+  }
+}
 const updateAppointment = (id, data) => {
   try {
     new Promise(async (resolve, reject) => {
@@ -96,5 +110,6 @@ module.exports={
     deleteApointment,
     getAll,
     getOne,
-    updateAppointment
+    updateAppointment,
+    getByIdUser
 }

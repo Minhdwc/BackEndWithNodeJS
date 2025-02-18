@@ -31,6 +31,22 @@ const getAll = () => {
     }
   });
 };
+const getByType =(type)=>{
+  return new Promise(async(resolve, reject)=>{
+    try{
+      const typeCate = await category.find({typeOf: type})
+      if(typeCate){
+        resolve({
+          status: "Found",
+          data: typeCate,
+          message: "Type of category"
+        })
+      }
+    }catch(e){
+      reject(e);
+    }
+  })
+}
 const getOne = (id) => {
   return new Promise(async (resolve, reject) => {
   try {
@@ -101,4 +117,5 @@ module.exports = {
   getAll,
   getOne,
   updateCategory,
+  getByType
 };

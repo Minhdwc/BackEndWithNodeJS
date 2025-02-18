@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+//Cuộc hẹn
 const appointmentSchema = mongoose.Schema({
 	userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
 	petId: { type: mongoose.Schema.Types.ObjectId, ref: "Pet" },

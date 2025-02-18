@@ -5,12 +5,13 @@ const create = async(req, res)=>{
     try{
         const schema = Joi.object({
             name: Joi.string().required(),
-            description: Joi.string().required()
+            description: Joi.string(),
+            typeOf: Joi.string().required()
         })
         const {error, values} = schema.validate(req.body)
-       const data = {name: req.body.name, description: req.body.description}
+        const data = req.body;
         if(error){
-            return res.status(400).json({status: error.status, message: error.message})
+            return res.status(400).json({message: error.message})
         }
         const response = await categoryServices.createCategory(data);
         return res.status(200).json(response);
@@ -29,6 +30,19 @@ const getOne = async(req, res)=>{
         return res.status(200).json(response);
     }catch(err){
         return res.status(400).json({status: err.status,message: err.message})
+    }
+}
+
+const getByType = async(req, res)=>{
+    try{
+        const type = req.params.type;
+        if(!type){
+            return res.status(400).json({status:400, message: "Type is required"})
+        }
+        const response = await categoryServices.getByType(type)
+        return res.status(200).json(response)
+    }catch(err){
+        return res.status(400).json({status: err.status, message: err.message})
     }
 }
 
@@ -74,5 +88,6 @@ module.exports = {
     getOne,
     getAll,
     update,
-    deleteCate
+    deleteCate,
+    getByType
 }
