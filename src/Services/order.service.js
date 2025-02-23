@@ -1,100 +1,100 @@
 const order = require("../Models/order");
 const createOrder = (data) => {
+  return new Promise(async (resolve, reject) => {
   try {
-    new Promise(async (resolve, reject) => {
-      const newPet = await pet.create(data);
-      if (newPet) {
+      const newOrder = await order.create(data);
+      if (newOrder) {
         resolve({
           status: "Created",
-          data: newPet,
-          message: "Created pet",
+          data: newOrder,
+          message: "Created order",
         });
       }
-    });
-  } catch (e) {
-    reject(e);
-  }
+    } catch (e) {
+      reject(e);
+    }
+  });
 };
 const getAll = () => {
+  return new Promise(async (resolve, reject) => {
   try {
-    new Promise(async (resolve, reject) => {
-      const allPet = await pet.find();
-      if (allPet) {
+      const allOrder = await order.find();
+      if (allOrder) {
         resolve({
           status: "Get all",
-          data: allPet,
-          message: "Get all pet",
+          data: allOrder,
+          message: "Get all order",
         });
       }
-    });
-  } catch (e) {
-    reject(e);
-  }
+    } catch (e) {
+      reject(e);
+    }
+  });
 };
 const getOne = (id) => {
+  return new Promise(async (resolve, reject) => {
   try {
-    new Promise(async (resolve, reject) => {
-      const pet = await pet.findById(id);
-      if (pet) {
+      const allOrder = await order.findById(id);
+      if (allOrder) {
         resolve({
-          status: "Found pet",
-          data: pet,
-          message: "Found pet",
+          status: "Found order",
+          data: allOrder,
+          message: "Found order",
         });
       }
-    });
-  } catch (e) {
-    reject(e);
-  }
+    } catch (e) {
+      reject(e);
+    }
+  });
 };
-const updateOnePet = (id, data) => {
+const update = (id, data) => {
+  return new Promise(async (resolve, reject) => {
   try {
-    new Promise(async (resolve, reject) => {
       if (id.length !== 24) {
         resolve({
           status: "Error",
-          message: "Pet not found",
+          message: "Order not found",
         });
         return;
       }
-      const currentPet = await pet.findById({ _id: id });
-      if (!currentPet) {
+      const currentOrder = await order.findById({ _id: id });
+      if (!currentOrder) {
         resolve({
           status: "Error",
-          message: "Pet not found",
+          message: "Order not found",
         });
       }
-      const updatePet = await pet.findByIdAndUpdate({ _id: id }, data, {
+      const updateOrder = await order.findByIdAndUpdate({ _id: id }, data, {
         new: true,
       });
       resolve({
         status: "Updated",
-        data: updatePet,
+        data: updateOrder,
         message: "Update successfully",
       });
-    });
-  } catch (e) {
-    reject(e);
-  }
+    } catch (e) {
+      reject(e);
+    }
+  });
 };
-const deleteOnePet = (id)=>{
+const deleteOrder = (id)=>{
+  return new Promise(async(resolve, reject)=>{
     try{
-        return new Promise(async(resolve, reject)=>{
-            const findPet = await pet.findByIdAndDelete({_id: id});
+            await order.findByIdAndDelete({_id: id});
             resolve({
                 status: "Deleted",
                 message:"Delete successfully",
             })
+          }catch(e){
+            reject(e);
+          }
         })
-    }catch(e){
-        reject(e);
-    }
 }
 
 module.exports={
     createOrder,
-    deleteOnePet,
+    deleteOrder,
     getAll,
     getOne,
-    updateOnePet
+    update
 }

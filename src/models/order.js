@@ -1,14 +1,14 @@
 const mongoose = require("mongoose");
 const orderSchema = mongoose.Schema({
-	total: { type: number, required: true },
-	quantity: { type: number, required: true },
+	total: { type: Number, required: true },
+	quantity: { type: Number, required: true },
 	delivery_location: {
 		city: { type: String },
 		district: { type: String },
 		street: { type: String },
 		number_house: { type: String },
 	},
-	type_pay: { type: String },
+	type_pay: { type: String, enum:["Tiền mặt", "Chuyển khoản"] },
 	status: {
 		type: String,
 		enum: [
@@ -22,7 +22,6 @@ const orderSchema = mongoose.Schema({
 	},
 	item: [
 		{
-			itemType: { type: String, enum: ["Pet", "Product"], required: true },
 			itemId: { type: mongoose.Schema.Types.ObjectId, required: true },
 			quantity: { type: Number, default: 1 },
 			price: { type: Number, required: true },

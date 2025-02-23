@@ -3,16 +3,15 @@ const Schema = mongoose.Schema;
 
 const PetSchema = new Schema({
 	name: { type: String, required: true },
-	species: { type: String },
-	generic: { type: String },
-	categoryId: { type: mongoose.Schema.Types.ObjectId },
-	gender: { type: String },
+	generic: { type: String, required: true },
+	categoryId: { type: mongoose.Schema.Types.ObjectId, required: true },
+	gender: { type: String, required: true },
 	size: {
 		height: Number,
 		width: Number,
 		weight: Number,
 	},
-	color: { type: String },
+	color: { type: String, required: true },
 	image: { type: String },
 });
 

@@ -146,7 +146,6 @@ const profile = (id)=>{
   return new Promise(async(resolve, reject)=>{
     try{
       const userFound = await user.findById(id)
-      console.log(userFound);
       if(!userFound){
         resolve({
           status: 'Not found',

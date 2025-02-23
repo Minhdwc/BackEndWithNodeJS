@@ -1,7 +1,7 @@
 const appointment = require("../Models/appointment");
 const createAppointment = (data) => {
+  return new Promise(async (resolve, reject) => {
   try {
-    new Promise(async (resolve, reject) => {
       const newAppointment = await appointment.create(data);
       if (newAppointment) {
         resolve({
@@ -10,14 +10,14 @@ const createAppointment = (data) => {
           message: "Created appointment",
         });
       }
-    });
-  } catch (e) {
-    reject(e);
-  }
+    } catch (e) {
+      reject(e);
+    }
+  });
 };
 const getAll = () => {
+  return new Promise(async (resolve, reject) => {
   try {
-    new Promise(async (resolve, reject) => {
       const allAppointment = await appointment.find();
       if (allAppointment) {
         resolve({
@@ -26,14 +26,14 @@ const getAll = () => {
           message: "Get all appointment",
         });
       }
-    });
-  } catch (e) {
-    reject(e);
-  }
+    } catch (e) {
+      reject(e);
+    }
+  });
 };
 const getOne = (id) => {
+  return new Promise(async (resolve, reject) => {
   try {
-    new Promise(async (resolve, reject) => {
       const appointment = await appointment.findById(id);
       if (appointment) {
         resolve({
@@ -42,28 +42,28 @@ const getOne = (id) => {
           message: "Found appointment",
         });
       }
-    });
-  } catch (e) {
-    reject(e);
-  }
+    } catch (e) {
+      reject(e);
+    }
+  });
 };
 const getByIdUser = (idUser)=>{
+  return new Promise(async(resolve, reject)=>{
   try{
-    return new Promise(async(resolve, reject)=>{
       const appointmentUser = await appointment.find({userId: idUser})
       resolve({
         status: "Found appointment",
         data: appointmentUser,
         message:  "Found appointment"
       })
-    })
-  }catch(e){
-    reject(e)
-  }
+    }catch(e){
+      reject(e)
+    }
+  })
 }
 const updateAppointment = (id, data) => {
+  return new Promise(async (resolve, reject) => {
   try {
-    new Promise(async (resolve, reject) => {
       if (id.length !== 24) {
         resolve({
           status: "Error",
@@ -86,23 +86,23 @@ const updateAppointment = (id, data) => {
         data: updateAppointment,
         message: "Update successfully",
       });
-    });
-  } catch (e) {
-    reject(e);
-  }
+    } catch (e) {
+      reject(e);
+    }
+  });
 };
 const deleteApointment = (id)=>{
+  return new Promise(async(resolve, reject)=>{
     try{
-        return new Promise(async(resolve, reject)=>{
             await appointment.findByIdAndDelete({_id: id});
             resolve({
                 status: "Deleted",
                 message:"Delete successfully",
             })
+          }catch(e){
+            reject(e);
+          }
         })
-    }catch(e){
-        reject(e);
-    }
 }
 
 module.exports={

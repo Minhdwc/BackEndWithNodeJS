@@ -4,7 +4,10 @@ const petRouter = require('./petRouter');
 const categoryRouter = require('./categoryRouter');
 const uploadRouter = require('./uploadRouter');
 const userRouter = require('./userRouter')
-const multer = require('multer');
+const cartRouter = require('./cartRouter');
+const notificationRouter = require('./notificationRouter');
+const orderRouter = require('./orderRouter');
+const reviewRouter = require('./reviewRouter')
 
 const routers = (app)=>{
     app.use('/home', homeRouter);
@@ -12,6 +15,10 @@ const routers = (app)=>{
     app.use('/upload', uploadRouter);
     app.use('/category', categoryRouter)
     app.use('/user', userRouter)
+    app.use('/cart', cartRouter)
+    app.use('/notification', notificationRouter)
+    app.use('/order', orderRouter)
+    app.use('/review', reviewRouter)
 }
 
 module.exports = routers;
