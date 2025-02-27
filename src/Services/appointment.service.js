@@ -1,7 +1,7 @@
 const appointment = require("../Models/appointment");
 const createAppointment = (data) => {
   return new Promise(async (resolve, reject) => {
-  try {
+    try {
       const newAppointment = await appointment.create(data);
       if (newAppointment) {
         resolve({
@@ -15,25 +15,45 @@ const createAppointment = (data) => {
     }
   });
 };
-const getAll = () => {
+const getAll = (limit, page, service, status) => {
   return new Promise(async (resolve, reject) => {
-  try {
-      const allAppointment = await appointment.find();
-      if (allAppointment) {
-        resolve({
-          status: "Get all",
-          data: allAppointment,
-          message: "Get all appointment",
-        });
+    try {
+      let filter = {};
+
+      if (service) {
+        filter.service = { $regex: service, $options: "i" };
       }
+
+      const validStatuses = ["pending", "completed", "confirmed"];
+      if (status && validStatuses.includes(status.toLowerCase())) {
+        filter.status = status.toLowerCase();
+      }
+
+      const allAppointment = await appointment
+        .find(filter)
+        .sort({ timeStamp: -1 })
+        .skip(page*limit)
+        .limit(limit);
+
+      const total = await appointment.countDocuments(filter);
+
+      resolve({
+        status: "success",
+        data: allAppointment,
+        total: total,
+        totalPages: Math.ceil(total / limit),
+        currentPage: page,
+        message: "Get all appointments",
+      });
     } catch (e) {
       reject(e);
     }
   });
 };
+
 const getOne = (id) => {
   return new Promise(async (resolve, reject) => {
-  try {
+    try {
       const appointment = await appointment.findById(id);
       if (appointment) {
         resolve({
@@ -47,23 +67,23 @@ const getOne = (id) => {
     }
   });
 };
-const getByIdUser = (idUser)=>{
-  return new Promise(async(resolve, reject)=>{
-  try{
-      const appointmentUser = await appointment.find({userId: idUser})
+const getByIdUser = (idUser) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const appointmentUser = await appointment.find({ userId: idUser });
       resolve({
         status: "Found appointment",
         data: appointmentUser,
-        message:  "Found appointment"
-      })
-    }catch(e){
-      reject(e)
+        message: "Found appointment",
+      });
+    } catch (e) {
+      reject(e);
     }
-  })
-}
+  });
+};
 const updateAppointment = (id, data) => {
   return new Promise(async (resolve, reject) => {
-  try {
+    try {
       if (id.length !== 24) {
         resolve({
           status: "Error",
@@ -78,9 +98,13 @@ const updateAppointment = (id, data) => {
           message: "appointment not found",
         });
       }
-      const updateAppointment = await appointment.findByIdAndUpdate({ _id: id }, data, {
-        new: true,
-      });
+      const updateAppointment = await appointment.findByIdAndUpdate(
+        { _id: id },
+        data,
+        {
+          new: true,
+        }
+      );
       resolve({
         status: "Updated",
         data: updateAppointment,
@@ -91,25 +115,25 @@ const updateAppointment = (id, data) => {
     }
   });
 };
-const deleteApointment = (id)=>{
-  return new Promise(async(resolve, reject)=>{
-    try{
-            await appointment.findByIdAndDelete({_id: id});
-            resolve({
-                status: "Deleted",
-                message:"Delete successfully",
-            })
-          }catch(e){
-            reject(e);
-          }
-        })
-}
+const deleteApointment = (id) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      await appointment.findByIdAndDelete({ _id: id });
+      resolve({
+        status: "Deleted",
+        message: "Delete successfully",
+      });
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
 
-module.exports={
-    createAppointment,
-    deleteApointment,
-    getAll,
-    getOne,
-    updateAppointment,
-    getByIdUser
-}
+module.exports = {
+  createAppointment,
+  deleteApointment,
+  getAll,
+  getOne,
+  updateAppointment,
+  getByIdUser,
+};

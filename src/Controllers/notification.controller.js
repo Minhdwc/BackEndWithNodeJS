@@ -23,7 +23,8 @@ const create = async (req, res) => {
 const getNotiByUser = async(req, res)=>{
     try{
         const userId = req.params.id;
-        const response = await notification.getNotificationOfUser(userId);
+        const {page, limit} = req.query
+        const response = await notification.getNotificationOfUser(userId, page, limit);
         return res.status(200).json(response);
     }catch(err){
         return res.status(500).json({ message: err.message });

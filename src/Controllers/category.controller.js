@@ -46,10 +46,11 @@ const getByType = async(req, res)=>{
     }
 }
 
-const getAll = async(req, res)=>{
+const getAll = async(req, res) =>{
     try{
-        const response = await categoryServices.getAll();
-        return res.status(200).json(response);
+        const {limit, page, search, typeOf} = req.query
+        const response = await categoryServices.getAll(limit, page, search, typeOf)
+        return res.status(200).json(response)
     }catch(err){
         return res.status(500).json({message: err.message})
     }
