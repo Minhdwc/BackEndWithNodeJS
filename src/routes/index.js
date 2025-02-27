@@ -11,16 +11,17 @@ const reviewRouter = require('./review.router')
 const authRouter = require('./auth.router')
 
 const routers = (app)=>{
-    app.use('/home', homeRouter);
-    app.use('/pet', petRouter);
-    app.use('/upload', uploadRouter);
-    app.use('/category', categoryRouter)
-    app.use('/user', userRouter)
-    app.use('/cart', cartRouter)
-    app.use('/notification', notificationRouter)
-    app.use('/order', orderRouter)
-    app.use('/review', reviewRouter)
-    app.use('/auth', authRouter)
+    const path = "/api/v1"
+    app.use(path + '/home', homeRouter);
+    app.use(path + '/pet', petRouter);
+    app.use(path + '/upload', uploadRouter);
+    app.use(path + '/category', categoryRouter)
+    app.use(path + '/user', userRouter)
+    app.use(path + '/cart', cartRouter)
+    app.use(path + '/notification', notificationRouter)
+    app.use(path + '/order', orderRouter)
+    app.use(path + '/review', reviewRouter)
+    app.use(path + '/auth', authRouter)
 }
 
 module.exports = routers;

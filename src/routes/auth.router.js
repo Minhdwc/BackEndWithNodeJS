@@ -3,6 +3,7 @@ const router = express.Router()
 const authController = require('../Controllers/auth.controller')
 const authMiddleware = require('../middleware/authMiddleware')
 
+router.post('/register', authController.register)
 router.post('/login', authController.login)
 router.get('/profile', authMiddleware.isAuthen, authController.getProfile)
 
