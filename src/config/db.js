@@ -18,7 +18,6 @@ class MongoDB {
             return this.connection;
         } catch (error) {
             console.error(`Error connecting to MongoDB: ${error.message}`);
-            process.exit(1); // Dừng chương trình nếu lỗi nghiêm trọng
         }
     };
 }

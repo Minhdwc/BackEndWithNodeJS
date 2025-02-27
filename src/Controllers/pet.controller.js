@@ -9,7 +9,7 @@ const create = async (req, res) => {
       gender: Joi.string().required(),
       categoryId: Joi.string().required(),
       size: Joi.object({
-        heghit: Joi.number().required(),
+        height: Joi.number().required(),
         width: Joi.number().required(),
         weight: Joi.number().required(),
       }).required(),
