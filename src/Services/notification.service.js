@@ -15,10 +15,10 @@ const createNotification = (data) => {
     }
   });
 };
-const getNotificationOfUser = (idUser) => {
+const getNotificationOfUser = (idUser, page, limit) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const notiUser = await notification.find({ userId: idUser });
+      const notiUser = await notification.find({ userId: idUser }).skip(limit * page).limit(limit);
       if (notiUser) {
         resolve({
           status: "Found",

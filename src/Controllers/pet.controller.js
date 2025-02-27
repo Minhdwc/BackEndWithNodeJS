@@ -44,7 +44,8 @@ const getOne = async (req, res) => {
 };
 const getAll = async (req, res) => {
   try {
-    const response = await petServices.getAll();
+    const {limit, page, generic, cateId, gender, color} = req.query
+    const response = await petServices.getAll(limit, page, generic, cateId, gender, color);
     return res.status(200).json(response);
   } catch (err) {
     return res.status(500).json({ message: err.message });

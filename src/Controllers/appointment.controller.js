@@ -35,7 +35,8 @@ const getOne = async(req, res)=>{
 }
 const getAll = async(req, res)=>{
     try{
-        const response = await appointmentService.getAll()
+        const {limit, page, service, status} = req.query
+        const response = await appointmentService.getAll(limit, page, service, status)
         return res.status(200).json(response)
     }catch(err){
         return res.status(500).json({message: err.message})

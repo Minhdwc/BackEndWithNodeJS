@@ -15,22 +15,44 @@ const createPet = (data) => {
     }
   });
 };
-const getAll = () => {
+const getAll = (limit, page, generic, cateId, gender, color) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const allPet = await pet.find();
-      if (allPet) {
-        resolve({
-          status: "Get all",
-          data: allPet,
-          message: "Get all pet",
-        });
+      let filter = {};
+      if (generic) {
+        filter.generic = { $regex: generic, $options: "i" };
       }
+      if (cateId) {
+        filter.cateId = cateId;
+      }
+      const validGenders = ["Đực", "Cái"];
+      if (gender && validGenders.includes(gender)) {
+        filter.gender = gender;
+      }
+      if (color) {
+        filter.color = { $regex: color, $options: "i" };
+      }
+      const allPet = await pet
+        .find(filter)
+        .skip(page*limit)
+        .limit(limit);
+
+      const total = await pet.countDocuments(filter);
+
+      resolve({
+        status: "success",
+        data: allPet,
+        total: total,
+        totalPages: Math.ceil(total / limit),
+        currentPage: page,
+        message: "Get all pets",
+      });
     } catch (e) {
       reject(e);
     }
   });
 };
+
 const getOne = (id) => {
   return new Promise(async (resolve, reject) => {
     try {

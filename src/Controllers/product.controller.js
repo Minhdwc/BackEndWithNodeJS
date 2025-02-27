@@ -35,7 +35,8 @@ const getOne = async(req, res)=>{
 }
 const getAll = async(req, res) =>{
     try{
-        const response = await product.getAll()
+        const {limit, page, search, sortDir, cateId,  priceFrom, priceTo} = req.query
+        const response = await product.getAll(limit, page, search, sortDir, cateId, parseInt(priceFrom), parseInt(priceTo))
         return res.status(200).json(response)
     }catch(err){
         return res.status(500).json({message: err.message})

@@ -15,22 +15,42 @@ const createCategory = (data) => {
     }
   });
 };
-const getAll = () => {
-  return new Promise(async (resolve, reject) => {
-  try {
-      const allCategory = await category.find();
-      if (allCategory) {
-        resolve({
-          status: "Get all",
-          data: allCategory,
-          message: "Get all category",
-        });
+  const getAll = (limit, page, search, typeOf ) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let query = {};
+  
+        if (search && search!=="") {
+          query.name = { $regex: search, $options: "i" };
+        }
+  
+        if (typeOf) {
+          query.type = typeOf;
+        }
+  
+  
+        const allcategory = await category
+          .find(query)
+          .skip(limit*page)
+          .limit(limit);
+  
+        const total = await category.countDocuments(query);
+  
+        if (allcategory) {
+          resolve({
+            status: "Get all",
+            data: allcategory,
+            total: total,
+            totalPages: Math.ceil(total / limit),
+            currentPage: page,
+            message: "Get all category with pagination",
+          });
+        }
+      } catch (err) {
+        reject(err);
       }
-    } catch (e) {
-      reject(e);
-    }
-  });
-};
+    });
+  };
 const getByType =(type)=>{
   return new Promise(async(resolve, reject)=>{
     try{
