@@ -1,13 +1,14 @@
 const express = require('express')
-const homeRouter = require('./homeRouter');
-const petRouter = require('./petRouter');
-const categoryRouter = require('./categoryRouter');
-const uploadRouter = require('./uploadRouter');
-const userRouter = require('./userRouter')
-const cartRouter = require('./cartRouter');
-const notificationRouter = require('./notificationRouter');
-const orderRouter = require('./orderRouter');
-const reviewRouter = require('./reviewRouter')
+const homeRouter = require('./home.router');
+const petRouter = require('./pet.router');
+const categoryRouter = require('./category.router');
+const uploadRouter = require('./upload.router');
+const userRouter = require('./user.router')
+const cartRouter = require('./cart.router');
+const notificationRouter = require('./notification.router');
+const orderRouter = require('./order.router');
+const reviewRouter = require('./review.router')
+const authRouter = require('./auth.router')
 
 const routers = (app)=>{
     app.use('/home', homeRouter);
@@ -19,6 +20,7 @@ const routers = (app)=>{
     app.use('/notification', notificationRouter)
     app.use('/order', orderRouter)
     app.use('/review', reviewRouter)
+    app.use('/auth', authRouter)
 }
 
 module.exports = routers;

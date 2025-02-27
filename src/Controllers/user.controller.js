@@ -1,5 +1,4 @@
 const joi = require("joi");
-const bcrypt = require("bcrypt");
 const userService = require("../Services/user.service");
 
 const create = async (req, res) => {
@@ -72,47 +71,47 @@ const deleteUser = async (req, res) => {
     return res.status(500).json({ message: err.message });
   }
 };
-const login = async (req, res) => {
-  try {
-    const schema = joi.object({
-      email: joi.string().email().required(),
-      password: joi.string().required(),
-    });
-    const { error } = schema.validate(req.body);
-    if (error) {
-      return res.status(500).json({
-        status: error.status,
-        message: error.details[0].message,
-      });
-    }
+// const login = async (req, res) => {
+//   try {
+//     const schema = joi.object({
+//       email: joi.string().email().required(),
+//       password: joi.string().required(),
+//     });
+//     const { error } = schema.validate(req.body);
+//     if (error) {
+//       return res.status(500).json({
+//         status: error.status,
+//         message: error.details[0].message,
+//       });
+//     }
 
-    const { email, password } = req.body;
-    const respon = await userService.login(email, password);
+//     const { email, password } = req.body;
+//     const respon = await userService.login(email, password);
 
-    if (respon.status === "Error") {
-      return res.status(500).json(respon);
-    }
+//     if (respon.status === "Error") {
+//       return res.status(500).json(respon);
+//     }
 
-    return res.status(200).json(respon);
-  } catch (err) {
-    return res.status(500).json({ message: err.message });
-  }
-};
-const getProfile = async (req, res) => {
-  try {
-    const userId = req.user;
-    const response = await userService.profile(userId);
-    return res.status(200).json(response);
-  } catch (err) {
-    return res.status(500).json({ message: err.message });
-  }
-};
+//     return res.status(200).json(respon);
+//   } catch (err) {
+//     return res.status(500).json({ message: err.message });
+//   }
+// };
+// const getProfile = async (req, res) => {
+//   try {
+//     const userId = req.user;
+//     const response = await userService.profile(userId);
+//     return res.status(200).json(response);
+//   } catch (err) {
+//     return res.status(500).json({ message: err.message });
+//   }
+// };
 module.exports = {
   create,
   getAll,
   getOne,
   update,
   deleteUser,
-  login,
-  getProfile,
+  // login,
+  // getProfile,
 };

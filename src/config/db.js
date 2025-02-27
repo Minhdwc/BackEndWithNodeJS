@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 class MongoDB {
     constructor() {
-        this.connection = null; // Tránh kết nối nhiều lần
+        this.connection = null;
     }
 
     connect = async () => {
@@ -22,4 +22,4 @@ class MongoDB {
     };
 }
 
-module.exports = new MongoDB(); // Xuất thể hiện của class để dùng chung
+module.exports = new MongoDB();
