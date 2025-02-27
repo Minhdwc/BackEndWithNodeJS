@@ -1,4 +1,5 @@
 const authService = require('../Services/auth.service')
+const joi = require('joi')
 
 const register = async (req, res) => {
   try {
@@ -37,7 +38,7 @@ const login = async (req, res) => {
     }
 
     const { email, password } = req.body;
-    const respon = await userService.login(email, password);
+    const respon = await authService.login(email, password);
 
     if (respon.status === "Error") {
       return res.status(500).json(respon);
@@ -51,7 +52,7 @@ const login = async (req, res) => {
 const getProfile = async (req, res) => {
   try {
     const userId = req.user;
-    const response = await userService.profile(userId);
+    const response = await authService.profile(userId);
     return res.status(200).json(response);
   } catch (err) {
     return res.status(500).json({ message: err.message });
