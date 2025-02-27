@@ -34,17 +34,17 @@ const getByUser = (idUser) => {
   });
 };
 
-const update = (idUser, data) => {
+const update = (id, data) => {
   return new Promise(async (resolve, reject) => {
     try {
-      if (idUser.length !== 24) {
+      if (id.length !== 24) {
         resolve({
           status: "Error",
           message: "Invalid id",
         });
         return;
       }
-      const updateCart = await cart.findOne({ userId: idUser });
+      const updateCart = await cart.findById({ id });
       if (!updateCart) {
         resolve({
           status: "Cart not found",

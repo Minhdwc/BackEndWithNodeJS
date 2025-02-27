@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const reviewController = require('../Controllers/review.controller')
-const authMiddleware = require('../middleware/authMiddleware')
+const reviewController = require('../../Controllers/review.controller')
+const authMiddleware = require('../../middleware/authMiddleware')
 
 router.post('/create', authMiddleware.isAuthen, reviewController.create)
 router.get('/get/d:id', authMiddleware.isAuthen, reviewController.getOne)

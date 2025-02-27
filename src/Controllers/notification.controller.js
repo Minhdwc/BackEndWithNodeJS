@@ -3,7 +3,7 @@ const notification = require("../Services/notification.service");
 
 const create = async (req, res) => {
   try {
-    const idUser = req.user;
+    const idUser = req.params.id;
     const schema = Joi.object({
       userId: idUser._id.tostring(),
       message: Joi.string(),
@@ -22,7 +22,7 @@ const create = async (req, res) => {
 };
 const getNotiByUser = async(req, res)=>{
     try{
-        const userId = req.user._id;
+        const userId = req.params.id;
         const response = await notification.getNotificationOfUser(userId);
         return res.status(200).json(response);
     }catch(err){
@@ -32,7 +32,7 @@ const getNotiByUser = async(req, res)=>{
 
 const update = async(req, res)=>{
     try{
-        const userId = req.user._id;
+        const userId = req.params.id;
         const data = req.body
         if(!userId){
             return res.status(500).json({message: err.message})

@@ -5,7 +5,6 @@ const authen = require('../middleware/authMiddleware')
 
 const create = async(req, res)=>{
     try{
-        const user = req.user;
         const schema = Joi.object({
             item: Joi.array().items(
                 Joi.object({
@@ -17,7 +16,7 @@ const create = async(req, res)=>{
                     image: Joi.string(),
                 })
             ).required(),
-            userId: user._id.toString(),
+            userId: Joi.toString(),
         })
         const {error, values} = schema.validate(req.body)
         if(error){
@@ -33,7 +32,7 @@ const create = async(req, res)=>{
 
 const getCartOfUser = async(req, res)=>{
     try{
-        const idUser = req.params.userId
+        const idUser = req.params.id
         if(!id){
             return res.status(500).json({message: "Id is required" });
         }
@@ -46,11 +45,11 @@ const getCartOfUser = async(req, res)=>{
 
 const update = async(req, res)=>{
     try{
-        const {userId, cartUpdate} = req.body
-        if(!userId){
+        const {id, cartUpdate} = req.body
+        if(!id){
             return res.status(500).json({ status: 500, message: "Id is required" });
         }
-        const response = await cartService.update(userId, cartUpdate)
+        const response = await cartService.update(id, cartUpdate)
         return res.status(200).json(response)
     }catch(err){
         return res.status(500).json({message: err.message})
@@ -59,7 +58,7 @@ const update = async(req, res)=>{
 
 const deleteCart = async(req, res)=>{
     try{
-        const userId = req.body.userId
+        const userId = req.params.id
         const response = await cartService.clearCart(userId)
         return res.status(200).json(response)
     }catch(err){
