@@ -11,7 +11,7 @@ const reviewRouter = require('./review.router')
 const authRouter = require('./auth.router')
 
 const routers = (app)=>{
-    const path = "/api/v1"
+    const path = '/api/v1';
     app.use(path + '/home', homeRouter);
     app.use(path + '/pet', petRouter);
     app.use(path + '/upload', uploadRouter);
