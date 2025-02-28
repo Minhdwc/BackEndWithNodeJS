@@ -16,10 +16,20 @@ const create = (data) => {
     }
   });
 };
-const getAll = () => {
+const getAll = (limit, page, sorDate) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const allReview = await review.find();
+      sortOption = {};
+      if (sorDate) {
+        sortOption.timeStamp =
+          sorDate === "desc" ? -1 : sorDate === "asc" ? 1 : undefined;
+      }
+
+      const allReview = await review
+        .find()
+        .sort(sortOption)
+        .skip(limit * page)
+        .limit(limit);
       if (allReview) {
         resolve({
           status: "Get all",
