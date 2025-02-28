@@ -41,12 +41,11 @@ const getAll = (limit, number, search, sortDir, cateId, priceTo, priceFrom) => {
         sortOption.price = sortDir === "desc" ? -1  : sortDir === "asc" ? 1 : undefined
       }
 
-      const skip = (number - 1) * limit;
 
       const allProduct = await product
         .find(filter)
         .sort(sortOption)
-        .skip(skip)
+        .skip(limit * number)
         .limit(limit);
 
       const total = await product.countDocuments(filter);

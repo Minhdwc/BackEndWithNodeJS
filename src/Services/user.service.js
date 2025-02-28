@@ -1,13 +1,13 @@
 const user = require("../Models/user");
-const bcrypt = require('bcrypt')
-require('dotenv').config()
+const bcrypt = require("bcrypt");
+require("dotenv").config();
 
 const createUser = (data) => {
   return new Promise(async (resolve, rejects) => {
     try {
       const password = data.password;
-      const hashPass = await bcrypt.hash(password, 10)
-      const newUser = await user.create({...data, password: hashPass});
+      const hashPass = await bcrypt.hash(password, 10);
+      const newUser = await user.create({ ...data, password: hashPass });
       if (newUser) {
         resolve({
           status: "Created",
@@ -21,10 +21,23 @@ const createUser = (data) => {
   });
 };
 
-const getAll = () => {
+const getAll = (limit, page, search, sortDir) => {
   return new Promise(async (resolve, rejects) => {
     try {
-      const allUsers = await user.find({});
+      let filter = {};
+      if (search) {
+        filter.name = { $regex: search, options: "i" };
+      }
+      let sortOption = {};
+      if (sortDir) {
+        sortOption.name =
+          sortDir === "desc" ? -1 : sortDir === "asc" ? 1 : undefined;
+      }
+      const allUsers = await user
+        .find(filter)
+        .sort(sortOption)
+        .skip(limit * page)
+        .limit(limit);
       if (allUsers) {
         resolve({
           status: "Found",
