@@ -1,6 +1,9 @@
 const Joi = require("joi");
 const petServices = require("../Services/pet.service");
 
+const imageService = require('../Services/image.service');
+const { default: mongoose } = require("mongoose");
+
 const create = async (req, res) => {
   try {
     const schema = Joi.object({
@@ -14,7 +17,6 @@ const create = async (req, res) => {
         weight: Joi.number().required(),
       }).required(),
       color: Joi.string().required(),
-      image: Joi.string().required(),
     });
 
     const { error, data } = schema.validate(req.body);
@@ -23,7 +25,14 @@ const create = async (req, res) => {
         message: error.message,
       });
     }
-    const petData = req.body;
+    const file = req.file;
+    if (!file) {
+      return res.status(400).json({ message: "Image is required" });
+    }
+    const uploadedImage = await imageService.uploadFileToSupabase(file);
+    const imageUrl = uploadedImage.url;
+
+    const petData = {...req.body, imageUrl, categoryId: new mongoose.Types.ObjectId(req.body.categoryId)};
     const response = await petServices.createPet(petData);
     return res.status(200).json(response);
   } catch (err) {

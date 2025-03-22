@@ -6,7 +6,7 @@ const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY
 
 const uploadFileToSupabase = async (file) => {
   const fileBuffer = file.buffer;
-  const fileName = file.originalname;
+  const fileName = file.originalname+Date.now();
   
   try {
     const { data, error } = await supabase.storage

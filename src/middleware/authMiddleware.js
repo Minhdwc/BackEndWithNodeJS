@@ -16,7 +16,6 @@ let generateToken = (user, secretSignature, tokenLife, refreshTokenLife) => {
         if (error) {
           return reject(error);
         }
-
         // Tạo refresh token
         jwt.sign(
           { data: user },

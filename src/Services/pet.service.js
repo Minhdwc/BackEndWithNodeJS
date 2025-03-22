@@ -1,8 +1,10 @@
 const pet = require("../Models/pet");
+const imageService = require('./image.service')
 const createPet = (data) => {
   return new Promise(async (resolve, reject) => {
-    try {
+    try {      
       const newPet = await pet.create(data);
+      
       if (newPet) {
         resolve({
           status: "Created",

@@ -47,13 +47,13 @@ const login = (email, password) => {
         }
         const accessTokenLife = "2h"
         const refreshTokenLife = "7d"
-        const accessToken = await authMiddleware.generateToken(dataUser, process.env.ACCESS_TOKEN,
+        const userLogged = await authMiddleware.generateToken(dataUser, process.env.ACCESS_TOKEN,
           accessTokenLife, refreshTokenLife);
         resolve({
           status: "Success",
           message: "Login successful",
           data: {
-            accessToken
+            userLogged
           },
         });
       } catch (e) {
