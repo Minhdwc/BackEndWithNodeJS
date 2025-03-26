@@ -13,6 +13,7 @@ const PetSchema = new Schema({
 	},
 	color: { type: String, required: true },
 	image: { type: String },
+	createAt: { type: Date, default: Date.now },
 });
 
 const Pet = mongoose.model("Pet", PetSchema);
