@@ -10,6 +10,9 @@ const orderRouter = require("./order.router");
 const reviewRouter = require("./review.router");
 const authRouter = require("./auth.router");
 const middleware = require("../../middleware/authMiddleware");
+const brandRouter = require("./brand.router");
+const accessoryRouter = require('./accessory.router')
+const foodRouter = require('./food.router')
 
 const routers = (app) => {
   const path = "/api/v1/admin";
@@ -72,6 +75,24 @@ const routers = (app) => {
     middleware.isAuthen,
     middleware.authorization,
     authRouter
+  );
+  app.use(
+    path + "/brand",
+    middleware.isAuthen,
+    middleware.authorization,
+    brandRouter
+  );
+  app.use(
+    path + "accessory",
+    middleware.isAuthen,
+    middleware.authorization,
+    accessoryRouter
+  );
+  app.use(
+    path + "/food",
+    middleware.isAuthen,
+    middleware.authorization,
+    foodRouter
   );
 };
 

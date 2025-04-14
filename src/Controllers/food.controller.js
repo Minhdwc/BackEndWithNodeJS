@@ -1,46 +1,32 @@
 const Joi = require("joi");
-const petServices = require("../Services/pet.service");
-
+const foodService = require("../Services/food.service");
 const imageService = require("../Services/image.service");
 
-const { default: mongoose } = require("mongoose");
 const create = async (req, res) => {
   try {
     const schema = Joi.object({
-      name: Joi.string().required(),
-      generic: Joi.string().required(),
-      gender: Joi.string().required(),
-      categoryId: Joi.string().required(),
-      size: Joi.object({
-        height: Joi.number().required(),
-        width: Joi.number().required(),
-        weight: Joi.number().required(),
-      }).required(),
-      color: Joi.string().required(),
+      name: Joi.string.require(),
+      description: Joi.string,
+      price: Joi.number.require(),
+      brand: Joi.string.require(),
+      type: Joi.string.require(),
+      stock: Joi.number.require()
     });
-
-    const { error, data } = schema.validate(req.body);
+    const { error } = schema.validate(req.body);
     if (error) {
-      return res.status(500).json({
-        message: error.message,
-      });
+      return res.status(500).json({ message: error.message });
     }
     const file = req.file;
     if (!file) {
-      return res.status(400).json({ message: "Image is required" });
+      return res.status(500).json({ message: "Image is required" });
     }
     const uploadedImage = await imageService.uploadFileToSupabase(file);
     const imageUrl = uploadedImage.url;
-
-    const petData = {
-      ...req.body,
-      imageUrl,
-      categoryId: new mongoose.Types.ObjectId(req.body.categoryId),
-    };
-    const response = await petServices.createPet(petData);
+    const accessoryData = { ...req.body, imageUrl };
+    const response = await foodService.create(accessoryData);
     return res.status(200).json(response);
-  } catch (err) {
-    return res.status(500).json({ message: err.message });
+  } catch (e) {
+    return res.status(500).json({ message: e.message });
   }
 };
 const getOne = async (req, res) => {
@@ -49,22 +35,22 @@ const getOne = async (req, res) => {
     if (!id) {
       return res.status(500).json({ message: "Id is required" });
     }
-    const response = await petServices.getOne(id);
-    return res.status(200).json(response);
+    const response = foodService.getOne(id);
+    return res.status(500).json(response);
   } catch (err) {
     return res.status(500).json({ message: err.message });
   }
 };
 const getAll = async (req, res) => {
   try {
-    const { limit, page, generic, cateId, gender, color } = req.query;
-    const response = await petServices.getAll(
+    const { limit, page, minPrice, maxPrice, minStock, maxStock } = req.query;
+    const response = await foodService.getAll(
       10,
       page,
-      generic,
-      cateId,
-      gender,
-      color
+      minPrice,
+      maxPrice,
+      minStock,
+      maxStock
     );
     return res.status(200).json(response);
   } catch (err) {
@@ -78,34 +64,28 @@ const update = async (req, res) => {
       return res.status(500).json({ message: "Id is required" });
     }
     const data = req.body;
-    const file = req.file
-    if(!file){
-      
-    }
-    const response = await petServices.updateOnePet(id, data);
+    const response = foodService.update(id, data);
     return res.status(200).json(response);
   } catch (err) {
     return res.status(500).json({ message: err.message });
   }
 };
-
-const deletePet = async (req, res) => {
+const deleteFood = async (req, res) => {
   try {
     const id = req.params.id;
     if (!id) {
       return res.status(500).json({ message: "Id is required" });
     }
-    const response = await petServices.deleteOnePet(id);
+    const response = await foodService.deleteAccessory(id);
     return res.status(200).json(response);
   } catch (err) {
     return res.status(500).json({ message: err.message });
   }
 };
-
 module.exports = {
   create,
-  getOne,
   getAll,
+  getOne,
   update,
-  deletePet,
+  deleteFood,
 };
