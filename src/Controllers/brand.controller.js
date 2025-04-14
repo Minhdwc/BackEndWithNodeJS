@@ -1,43 +1,30 @@
 const Joi = require("joi");
-const petServices = require("../Services/pet.service");
-
+const brandService = require("../Services/brand.service");
 const imageService = require("../Services/image.service");
+require("mongoose");
 
-const { default: mongoose } = require("mongoose");
 const create = async (req, res) => {
   try {
     const schema = Joi.object({
       name: Joi.string().required(),
-      generic: Joi.string().required(),
-      gender: Joi.string().required(),
-      categoryId: Joi.string().required(),
-      size: Joi.object({
-        height: Joi.number().required(),
-        width: Joi.number().required(),
-        weight: Joi.number().required(),
-      }).required(),
-      color: Joi.string().required(),
+      country: Joi.string().required(),
     });
-
-    const { error, data } = schema.validate(req.body);
+    const { error } = schema.validate(req.body);
     if (error) {
-      return res.status(500).json({
-        message: error.message,
-      });
+      return res.status(500).json({ message: error.message });
     }
     const file = req.file;
     if (!file) {
-      return res.status(400).json({ message: "Image is required" });
+      return res.status(500).json({ message: "Image is required" });
     }
     const uploadedImage = await imageService.uploadFileToSupabase(file);
     const imageUrl = uploadedImage.url;
 
-    const petData = {
+    const brandData = {
       ...req.body,
       imageUrl,
-      categoryId: new mongoose.Types.ObjectId(req.body.categoryId),
     };
-    const response = await petServices.createPet(petData);
+    const response = await brandService.createBrand(brandData);
     return res.status(200).json(response);
   } catch (err) {
     return res.status(500).json({ message: err.message });
@@ -49,7 +36,7 @@ const getOne = async (req, res) => {
     if (!id) {
       return res.status(500).json({ message: "Id is required" });
     }
-    const response = await petServices.getOne(id);
+    const response = await brandService.getOne(id);
     return res.status(200).json(response);
   } catch (err) {
     return res.status(500).json({ message: err.message });
@@ -57,15 +44,8 @@ const getOne = async (req, res) => {
 };
 const getAll = async (req, res) => {
   try {
-    const { limit, page, generic, cateId, gender, color } = req.query;
-    const response = await petServices.getAll(
-      10,
-      page,
-      generic,
-      cateId,
-      gender,
-      color
-    );
+    const { limit, page } = req.query;
+    const response = await brandService.getAll(10, page);
     return res.status(200).json(response);
   } catch (err) {
     return res.status(500).json({ message: err.message });
@@ -75,37 +55,31 @@ const update = async (req, res) => {
   try {
     const id = req.params.id;
     if (!id) {
-      return res.status(500).json({ message: "Id is required" });
+      return res.status(500).json({ message: "Invalid ID" });
     }
     const data = req.body;
-    const file = req.file
-    if(!file){
-      
-    }
-    const response = await petServices.updateOnePet(id, data);
+    const response = await brandService.updateBrand(id, data);
     return res.status(200).json(response);
   } catch (err) {
     return res.status(500).json({ message: err.message });
   }
 };
-
-const deletePet = async (req, res) => {
+const deleteBrand = async (req, res) => {
   try {
     const id = req.params.id;
     if (!id) {
       return res.status(500).json({ message: "Id is required" });
     }
-    const response = await petServices.deleteOnePet(id);
+    const response = await brandService.deleteBrand(id);
     return res.status(200).json(response);
   } catch (err) {
     return res.status(500).json({ message: err.message });
   }
 };
-
 module.exports = {
-  create,
-  getOne,
-  getAll,
-  update,
-  deletePet,
-};
+    create,
+    getOne,
+    getAll,
+    update,
+    deleteBrand
+}

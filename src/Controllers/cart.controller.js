@@ -8,15 +8,15 @@ const create = async(req, res)=>{
         const schema = Joi.object({
             item: Joi.array().items(
                 Joi.object({
-                    idPet: Joi.string(),
-                    idProduct: Joi.string(),
+                    idPet: Joi.string().allow(null),
+                    idProduct: Joi.string().allow(null),
                     quantity: Joi.number(),
                     price: Joi.number(),
-                    totalPrice: Joi.number(),
-                    image: Joi.string(),
+                    totalPrice: Joi.number().allow(null),
+                    image: Joi.string().allow(null),
                 })
             ).required(),
-            userId: Joi.toString(),
+            userId: Joi.string().required(),
         })
         const {error, values} = schema.validate(req.body)
         if(error){

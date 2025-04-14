@@ -11,7 +11,7 @@ const register = async (req, res) => {
       role: joi.string().required(),
       image: joi.string(),
     });
-    const { error, values } = schema.validate(req.body);
+    const { error } = schema.validate(req.body);
     const data = req.body;
     if (error) {
       return res.status(500).json({ message: error.message });

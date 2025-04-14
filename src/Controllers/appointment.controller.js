@@ -9,7 +9,7 @@ const create = async (req, res)=>{
             service: Joi.string().required(),
             status: Joi.string().required(),
         })
-        const {error, values} = schema.validate(req.body)
+        const {error} = schema.validate(req.body)
         const data = req.body
         if(error){
             return res.status(500).json({message: error.message})

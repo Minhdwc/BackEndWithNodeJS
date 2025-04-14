@@ -1,5 +1,4 @@
 const pet = require("../Models/pet");
-const imageService = require('./image.service')
 const createPet = (data) => {
   return new Promise(async (resolve, reject) => {
     try {      
@@ -36,6 +35,7 @@ const getAll = (limit, page, generic, cateId, gender, color) => {
       }
       const allPet = await pet
         .find(filter)
+        .sort({createAt: -1})
         .skip(page*limit)
         .limit(limit);
 
@@ -58,11 +58,11 @@ const getAll = (limit, page, generic, cateId, gender, color) => {
 const getOne = (id) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const pet = await pet.findById(id);
-      if (pet) {
+      const petFind = await pet.findById(id);
+      if (petFind) {
         resolve({
           status: "Found pet",
-          data: pet,
+          data: petFind,
           message: "Found pet",
         });
       }
@@ -81,7 +81,7 @@ const updateOnePet = (id, data) => {
         });
         return;
       }
-      const currentPet = await pet.findById({ _id: id });
+      const currentPet = await pet.findById(id);
       if (!currentPet) {
         resolve({
           status: "Error",
@@ -104,7 +104,7 @@ const updateOnePet = (id, data) => {
 const deleteOnePet = (id) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const findPet = await pet.findByIdAndDelete({ _id: id });
+      await pet.findByIdAndDelete({ _id: id });
       resolve({
         status: "Deleted",
         message: "Delete successfully",
