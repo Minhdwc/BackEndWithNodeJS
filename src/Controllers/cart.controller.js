@@ -1,6 +1,5 @@
 const Joi = require('joi');
 const cartService = require('../Services/cart.service')
-const authen = require('../middleware/authMiddleware')
 
 
 const create = async(req, res)=>{
@@ -33,7 +32,7 @@ const create = async(req, res)=>{
 const getCartOfUser = async(req, res)=>{
     try{
         const idUser = req.params.id
-        if(!id){
+        if(!idUser){
             return res.status(500).json({message: "Id is required" });
         }
         const response = await cartService.getByUser(idUser)
@@ -45,7 +44,8 @@ const getCartOfUser = async(req, res)=>{
 
 const update = async(req, res)=>{
     try{
-        const {id, cartUpdate} = req.body
+        const id = req.params.id
+        const cartUpdate = req.body
         if(!id){
             return res.status(500).json({ status: 500, message: "Id is required" });
         }

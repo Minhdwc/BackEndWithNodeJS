@@ -1,5 +1,6 @@
 const cart = require("../Models/cart");
-
+const Pet = require('../Models/pet');   
+const Product = require('../Models/product'); 
 const create = (data) => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -34,48 +35,113 @@ const getByUser = (idUser) => {
   });
 };
 
-const update = (id, data) => {
+const update = (id, body) => {
   return new Promise(async (resolve, reject) => {
     try {
+      // Lấy item array từ body
+      const data = body.item;
+
+      if (!Array.isArray(data)) {
+        return resolve({
+          status: "Error",
+          message: "Invalid data format (item must be an array)",
+        });
+      }
+
       if (id.length !== 24) {
-        resolve({
+        return resolve({
           status: "Error",
           message: "Invalid id",
         });
-        return;
       }
-      const updateCart = await cart.findById({ id });
+
+      const updateCart = await cart.findOne({ userId: id });
+
       if (!updateCart) {
-        resolve({
+        return resolve({
           status: "Cart not found",
           message: "Cart not found",
         });
       }
-      updateCart.item = cart.item.map((item) => {
-        const updateData = data.find(
+
+      // Cập nhật item đã có
+      updateCart.item = updateCart.item.map((item) => {
+        const matchedItem = data.find(
           (itemData) =>
-            (itemData.idProduct && item.idProduct === itemData.idProduct) ||
-            (itemData.idPet && item.idPet === itemData.idPet)
+            (itemData.idProduct && String(item.idProduct) === String(itemData.idProduct)) ||
+            (itemData.idPet && String(item.idPet) === String(itemData.idPet))
         );
-        if(updateData){
-          return{
-            ...item.toObject,
-            quantity: updateData.quantity,
-            totalPrice: updateData.quantity * item.price
-          }
+
+        if (matchedItem) {
+          return {
+            ...item.toObject(),
+            quantity: matchedItem.quantity,
+            totalPrice: matchedItem.quantity * item.price,
+          };
         }
+
         return item;
       });
+
+      // Thêm item mới nếu chưa có
+      for (const incomingItem of data) {
+        const matchedItem = updateCart.item.find(
+          (item) =>
+            (incomingItem.idProduct && String(incomingItem.idProduct) === String(item.idProduct)) ||
+            (incomingItem.idPet && String(incomingItem.idPet) === String(item.idPet))
+        );
+
+        if (!matchedItem) {
+          let price = null;
+          let image = null;
+
+          if (incomingItem.idPet) {
+            const petData = await Pet.findById(incomingItem.idPet).lean();
+            if (petData) {
+              price = petData.price;
+              image = petData.image;
+            }
+          } else if (incomingItem.idProduct) {
+            const productData = await Product.findById(incomingItem.idProduct).lean();
+            if (productData) {
+              price = productData.price;
+              image = productData.image;
+            }
+          }
+
+          if (typeof price === 'number' && !isNaN(price)) {
+            updateCart.item.push({
+              idPet: incomingItem.idPet || null,
+              idProduct: incomingItem.idProduct || null,
+              quantity: incomingItem.quantity,
+              price,
+              totalPrice: incomingItem.quantity * price,
+              image: image || null,
+            });
+          } else {
+            console.error("Invalid price for item:", incomingItem);
+            return resolve({
+              status: "Error",
+              message: "Price is required and must be a valid number",
+            });
+          }
+        }
+      }
+
+      await updateCart.save();
+
       resolve({
         status: "Updated",
         data: updateCart,
-        message: "Update successfully",
+        message: "Cart updated successfully",
       });
     } catch (err) {
       reject(err);
     }
   });
 };
+
+
 
 const clearCart = (idUser) => {
   return new Promise(async (resolve, reject) => {

@@ -6,5 +6,5 @@ const BrandSchema = new Schema({
     country:{ type: String, required: true},
     createdAt:{type:Date, default: Date.now()}
 })
-const brand = mongoose.model('BrandSchema')
+const brand = mongoose.model('BrandSchema', BrandSchema)
 module.exports = brand
