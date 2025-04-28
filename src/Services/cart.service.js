@@ -93,13 +93,11 @@ const update = (id, body) => {
 
         if (!matchedItem) {
           let price = null;
-          let image = null;
 
           if (incomingItem.idPet) {
             const petData = await Pet.findById(incomingItem.idPet).lean();
             if (petData) {
               price = petData.price;
-              image = petData.image;
             }
           } else if (incomingItem.idProduct) {
             const productData = await Product.findById(
@@ -107,7 +105,6 @@ const update = (id, body) => {
             ).lean();
             if (productData) {
               price = productData.price;
-              image = productData.image;
             }
           }
 
@@ -118,7 +115,6 @@ const update = (id, body) => {
               quantity: incomingItem.quantity,
               price,
               totalPrice: incomingItem.quantity * price,
-              image: image || null,
             });
           } else {
             console.error("Invalid price for item:", incomingItem);
@@ -143,15 +139,15 @@ const update = (id, body) => {
   });
 };
 
-const clearCart = (idUser) => {
+const clearCart = (id) => {
   return new Promise(async (resolve, reject) => {
-    if (idUser.length !== 24) {
+    if (id.length !== 24) {
       resolve({
         status: "Error",
         message: "Invalid id",
       });
     }
-    await cart.deleteOne({ userId: idUser });
+    await cart.findByIdAndDelete(id );
     resolve({
       status: "Deleted",
       message: "Cart deleted",

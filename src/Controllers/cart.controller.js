@@ -12,7 +12,6 @@ const create = async(req, res)=>{
                     quantity: Joi.number(),
                     price: Joi.number(),
                     totalPrice: Joi.number().allow(null),
-                    image: Joi.string().allow(null),
                 })
             ).required(),
             userId: Joi.string().required(),
@@ -58,8 +57,8 @@ const update = async(req, res)=>{
 
 const deleteCart = async(req, res)=>{
     try{
-        const userId = req.params.id
-        const response = await cartService.clearCart(userId)
+        const id = req.params.id
+        const response = await cartService.clearCart(id)
         return res.status(200).json(response)
     }catch(err){
         return res.status(500).json({message: err.message})
