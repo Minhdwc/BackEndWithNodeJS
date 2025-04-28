@@ -1,6 +1,6 @@
 const cart = require("../Models/cart");
-const Pet = require('../Models/pet');   
-const Product = require('../Models/product'); 
+const Pet = require("../Models/pet");
+const Product = require("../Models/product");
 const create = (data) => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -38,13 +38,12 @@ const getByUser = (idUser) => {
 const update = (id, body) => {
   return new Promise(async (resolve, reject) => {
     try {
-      // Lấy item array từ body
       const data = body.item;
 
       if (!Array.isArray(data)) {
         return resolve({
           status: "Error",
-          message: "Invalid data format (item must be an array)",
+          message: "Invalid data",
         });
       }
 
@@ -64,11 +63,11 @@ const update = (id, body) => {
         });
       }
 
-      // Cập nhật item đã có
       updateCart.item = updateCart.item.map((item) => {
         const matchedItem = data.find(
           (itemData) =>
-            (itemData.idProduct && String(item.idProduct) === String(itemData.idProduct)) ||
+            (itemData.idProduct &&
+              String(item.idProduct) === String(itemData.idProduct)) ||
             (itemData.idPet && String(item.idPet) === String(itemData.idPet))
         );
 
@@ -83,12 +82,13 @@ const update = (id, body) => {
         return item;
       });
 
-      // Thêm item mới nếu chưa có
       for (const incomingItem of data) {
         const matchedItem = updateCart.item.find(
           (item) =>
-            (incomingItem.idProduct && String(incomingItem.idProduct) === String(item.idProduct)) ||
-            (incomingItem.idPet && String(incomingItem.idPet) === String(item.idPet))
+            (incomingItem.idProduct &&
+              String(incomingItem.idProduct) === String(item.idProduct)) ||
+            (incomingItem.idPet &&
+              String(incomingItem.idPet) === String(item.idPet))
         );
 
         if (!matchedItem) {
@@ -102,14 +102,16 @@ const update = (id, body) => {
               image = petData.image;
             }
           } else if (incomingItem.idProduct) {
-            const productData = await Product.findById(incomingItem.idProduct).lean();
+            const productData = await Product.findById(
+              incomingItem.idProduct
+            ).lean();
             if (productData) {
               price = productData.price;
               image = productData.image;
             }
           }
 
-          if (typeof price === 'number' && !isNaN(price)) {
+          if (typeof price === "number" && !isNaN(price)) {
             updateCart.item.push({
               idPet: incomingItem.idPet || null,
               idProduct: incomingItem.idProduct || null,
@@ -140,8 +142,6 @@ const update = (id, body) => {
     }
   });
 };
-
-
 
 const clearCart = (idUser) => {
   return new Promise(async (resolve, reject) => {
