@@ -10,6 +10,15 @@ const create = async (req, res) => {
       password: joi.string().required(),
       role: joi.string().required(),
       image: joi.string(),
+      addresses: joi.array().items(
+        joi.object({
+          display_name: joi.string().required(),
+          lat: joi.number().required(),
+          lon: joi.number().required(),
+          address: joi.object().required(),
+          isDefault: joi.boolean()
+        })
+      )
     });
     const { error, values } = schema.validate(req.body);
     const data = req.body;
@@ -50,6 +59,27 @@ const update = async (req, res) => {
     const id = req.params.id;
     if (!id) {
       return res.status(500).json({ message: "Invalid id" });
+    }
+    const schema = joi.object({
+      name: joi.string(),
+      dateOfBirth: joi.date(),
+      email: joi.string(),
+      password: joi.string(),
+      role: joi.string(),
+      image: joi.string(),
+      addresses: joi.array().items(
+        joi.object({
+          display_name: joi.string().required(),
+          lat: joi.number().required(),
+          lon: joi.number().required(),
+          address: joi.object().required(),
+          isDefault: joi.boolean()
+        })
+      )
+    });
+    const { error } = schema.validate(req.body);
+    if (error) {
+      return res.status(400).json({ message: error.message });
     }
     const data = req.body;
     const response = await userService.updateUser(id, data);

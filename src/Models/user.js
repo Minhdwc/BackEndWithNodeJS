@@ -8,6 +8,15 @@ const UserSchema = new Schema({
 	password: { type: String },
 	role: { type: String, enum: ["admin", "user"], default: "user" },
 	image: { type: String },
+	addresses: [
+		{
+			display_name: { type: String },
+			lat: { type: Number },
+			lon: { type: Number },
+			address: { type: Object },
+			isDefault: { type: Boolean, default: false }
+		}
+	]
 });
 
 const User = mongoose.model("User", UserSchema);

@@ -1,12 +1,22 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const orderController = require('../../Controllers/order.controller')
-const authen = require('../../middleware/authMiddleware')
+const orderController = require("../../Controllers/order.controller");
+const { isAuthen } = require("../../middleware/authMiddleware");
 
-router.post('/create', authen.isAuthen, orderController.create)
-router.get('/get', authen.isAuthen, orderController.getOne)
-router.get('/get/all', authen.isAuthen, orderController.getAll)
-router.put('/update/u:id', authen.isAuthen, orderController.update)
-router.delete('/delete/d:id', authen.isAuthen, orderController.deleteOrder)
+router.post("/from-cart", isAuthen, orderController.createFromCart);
 
-module.exports = router
+router.post(
+  "/:orderId/confirm-payment",
+  isAuthen,
+  orderController.confirmPayment
+);
+
+router.get("/getAll/", isAuthen, orderController.getAll);
+
+router.get("/getOne/o=:id", isAuthen, orderController.getOne);
+
+router.put("/update/o=:id", isAuthen, orderController.update);
+
+router.delete("/delete/o=:id", isAuthen, orderController.deleteOrder);
+
+module.exports = router;

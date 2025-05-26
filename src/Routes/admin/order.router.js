@@ -1,11 +1,14 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const orderController = require('../../Controllers/order.controller')
+const orderController = require("../../Controllers/order.controller");
+const { isAuthen, authorization } = require("../../middleware/authMiddleware");
 
-router.post('/create', orderController.create)
-router.get('/get', orderController.getOne)
-router.get('/get/all', orderController.getAll)
-router.put('/update/u:id', orderController.update)
-router.delete('/delete/d:id', orderController.deleteOrder)
+router.get("/getAll/", isAuthen, authorization, orderController.getAll);
 
-module.exports = router
+router.get("/getOne/o=:id", isAuthen, authorization, orderController.getOne);
+
+router.put("/update/o=:id", isAuthen, authorization, orderController.update);
+
+router.delete("/delete/o=:id", isAuthen, authorization, orderController.deleteOrder);
+
+module.exports = router;

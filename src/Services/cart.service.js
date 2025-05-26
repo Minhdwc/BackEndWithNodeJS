@@ -1,6 +1,7 @@
 const cart = require("../Models/cart");
 const Pet = require("../Models/pet");
-const Product = require("../Models/product");
+const Food = require("../Models/food");
+const Accessory = require("../Models/accessory");
 const create = (data) => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -24,9 +25,15 @@ const getByUser = (idUser) => {
       const cartUser = await cart.find({ userId: idUser });
       if (cartUser) {
         resolve({
-          status: "Founded",
+          status: "Found",
           data: cartUser,
-          message: "Founded",
+          message: "Cart found successfully",
+        });
+      } else {
+        resolve({
+          status: "Not Found",
+          data: [],
+          message: "No cart found for this user",
         });
       }
     } catch (err) {
@@ -35,7 +42,7 @@ const getByUser = (idUser) => {
   });
 };
 
-const update = (id, body) => {
+const update = (userId, body) => {
   return new Promise(async (resolve, reject) => {
     try {
       const data = body.item;
@@ -43,32 +50,34 @@ const update = (id, body) => {
       if (!Array.isArray(data)) {
         return resolve({
           status: "Error",
-          message: "Invalid data",
+          message: "Items must be provided as an array",
         });
       }
 
-      if (id.length !== 24) {
+      if (!userId || userId.length !== 24) {
         return resolve({
           status: "Error",
-          message: "Invalid id",
+          message: "Invalid user ID",
         });
       }
 
-      const updateCart = await cart.findOne({ userId: id });
-
+      const updateCart = await cart.findOne({ userId });
       if (!updateCart) {
         return resolve({
-          status: "Cart not found",
-          message: "Cart not found",
+          status: "Error",
+          message: "Cart not found for this user",
         });
       }
 
-      updateCart.item = updateCart.item.map((item) => {
+      updateCart.item = updateCart.item || [];
+
+      const updatedItems = updateCart.item.map((item) => {
         const matchedItem = data.find(
           (itemData) =>
-            (itemData.idProduct &&
-              String(item.idProduct) === String(itemData.idProduct)) ||
-            (itemData.idPet && String(item.idPet) === String(itemData.idPet))
+            itemData.itemType &&
+            itemData.itemId &&
+            itemData.itemType === item.itemType &&
+            String(itemData.itemId) === String(item.itemId)
         );
 
         if (matchedItem) {
@@ -78,62 +87,76 @@ const update = (id, body) => {
             totalPrice: matchedItem.quantity * item.price,
           };
         }
-
         return item;
       });
 
-      for (const incomingItem of data) {
-        const matchedItem = updateCart.item.find(
-          (item) =>
-            (incomingItem.idProduct &&
-              String(incomingItem.idProduct) === String(item.idProduct)) ||
-            (incomingItem.idPet &&
-              String(incomingItem.idPet) === String(item.idPet))
-        );
+      const newItems = await Promise.all(
+        data.map(async (incomingItem) => {
+          if (!incomingItem.itemId || !incomingItem.itemType) {
+            return null;
+          }
 
-        if (!matchedItem) {
+          const alreadyExists = updatedItems.some(
+            (item) =>
+              item.itemType === incomingItem.itemType &&
+              String(item.itemId) === String(incomingItem.itemId)
+          );
+
+          if (alreadyExists) {
+            return null;
+          }
+
           let price = null;
-
-          if (incomingItem.idPet) {
-            const petData = await Pet.findById(incomingItem.idPet).lean();
-            if (petData) {
-              price = petData.price;
+          try {
+            switch (incomingItem.itemType) {
+              case "Pet":
+                const petData = await Pet.findById(incomingItem.itemId).lean();
+                price = petData?.price;
+                break;
+              case "Food":
+                const foodData = await Food.findById(
+                  incomingItem.itemId
+                ).lean();
+                price = foodData?.price;
+                break;
+              case "Accessory":
+                const accessoryData = await Accessory.findById(
+                  incomingItem.itemId
+                ).lean();
+                price = accessoryData?.price;
+                break;
+              default:
+                console.log(`Invalid item type: ${incomingItem.itemType}`);
+                return;
             }
-          } else if (incomingItem.idProduct) {
-            const productData = await Product.findById(
-              incomingItem.idProduct
-            ).lean();
-            if (productData) {
-              price = productData.price;
-            }
+          } catch (error) {
+            console.error(error);
+            return;
           }
 
-          if (typeof price === "number" && !isNaN(price)) {
-            updateCart.item.push({
-              idPet: incomingItem.idPet || null,
-              idProduct: incomingItem.idProduct || null,
-              quantity: incomingItem.quantity,
-              price,
-              totalPrice: incomingItem.quantity * price,
-            });
-          } else {
-            console.error("Invalid price for item:", incomingItem);
-            return resolve({
-              status: "Error",
-              message: "Price is required and must be a valid number",
-            });
-          }
-        }
-      }
+          return {
+            itemType: incomingItem.itemType,
+            itemId: incomingItem.itemId,
+            quantity: incomingItem.quantity,
+            price,
+          };
+        })
+      );
 
-      await updateCart.save();
+      updateCart.item = [
+        ...updatedItems,
+        ...newItems.filter((item) => item !== null),
+      ];
+
+      const savedCart = await updateCart.save();
 
       resolve({
         status: "Updated",
-        data: updateCart,
+        data: savedCart,
         message: "Cart updated successfully",
       });
     } catch (err) {
+      console.error("Error updating cart:", err);
       reject(err);
     }
   });
@@ -147,13 +170,14 @@ const clearCart = (id) => {
         message: "Invalid id",
       });
     }
-    await cart.findByIdAndDelete(id );
+    await cart.findByIdAndDelete(id);
     resolve({
       status: "Deleted",
       message: "Cart deleted",
     });
   });
 };
+
 
 module.exports = {
   create,

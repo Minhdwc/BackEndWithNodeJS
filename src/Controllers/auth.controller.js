@@ -6,18 +6,27 @@ const register = async (req, res) => {
     const schema = joi.object({
       name: joi.string().required(),
       dateOfBirth: joi.date().required(),
-      email: joi.string().required(),
+      email: joi.string().email().required(),
       password: joi.string().required(),
-      role: joi.string().required(),
-      image: joi.string(),
+      role: joi.string().default("user"),
+      image: joi.string().required(),
+      addresses: joi.array().items(
+        joi.object({
+          display_name: joi.string().required(),
+          lat: joi.number().required(),
+          lon: joi.number().required(),
+          address: joi.object().required(),
+          isDefault: joi.boolean().default(false)
+        })
+      ).required()
     });
     const { error } = schema.validate(req.body);
-    const data = req.body;
     if (error) {
-      return res.status(500).json({ message: error.message });
+      return res.status(400).json({ message: error.message });
     }
+    const data = req.body;
     const response = await authService.register(data);
-    return res.status(200).json({ response });
+    return res.status(200).json(response);
   } catch (err) {
     return res.status(500).json({ message: err.message });
   }
