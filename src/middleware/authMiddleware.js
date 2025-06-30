@@ -1,10 +1,9 @@
 const jwt = require("jsonwebtoken");
-const User = require('../Models/user')
+const User = require("../Models/user");
 require("dotenv").config();
 
 let generateToken = (user, secretSignature, tokenLife, refreshTokenLife) => {
   return new Promise((resolve, reject) => {
-    // Tạo access token
     jwt.sign(
       { data: user },
       secretSignature,
@@ -16,7 +15,7 @@ let generateToken = (user, secretSignature, tokenLife, refreshTokenLife) => {
         if (error) {
           return reject(error);
         }
-        // Tạo refresh token
+
         jwt.sign(
           { data: user },
           secretSignature,
@@ -63,18 +62,21 @@ let isAuthen = async (req, res, next) => {
   }
 
   try {
-    // Verify access token
-    const decoded = await verifyToken(tokenFromClient, process.env.ACCESS_TOKEN);
+    const decoded = await verifyToken(
+      tokenFromClient,
+      process.env.ACCESS_TOKEN
+    );
     const id = decoded.data._id;
     const loggedUser = await User.findById(id);
     req.user = loggedUser;
     next();
   } catch (error) {
-    // If access token is expired and refresh token is provided
-    if (error.name === 'TokenExpiredError' && refreshTokenFromClient) {
+    if (error.name === "TokenExpiredError" && refreshTokenFromClient) {
       try {
-        // Verify refresh token
-        const decoded = await verifyToken(refreshTokenFromClient, process.env.REFRESH_TOKEN);
+        const decoded = await verifyToken(
+          refreshTokenFromClient,
+          process.env.REFRESH_TOKEN
+        );
         const id = decoded.data._id;
         const loggedUser = await User.findById(id);
 
@@ -84,7 +86,6 @@ let isAuthen = async (req, res, next) => {
           });
         }
 
-        // Generate new tokens
         const tokens = await generateToken(
           loggedUser,
           process.env.ACCESS_TOKEN,
@@ -92,11 +93,9 @@ let isAuthen = async (req, res, next) => {
           process.env.REFRESH_TOKEN_LIFE
         );
 
-        // Set new tokens in response headers
-        res.setHeader('x-access-token', tokens.accessToken);
-        res.setHeader('x-refresh-token', tokens.refreshToken);
+        res.setHeader("x-access-token", tokens.accessToken);
+        res.setHeader("x-refresh-token", tokens.refreshToken);
 
-        // Set user in request
         req.user = loggedUser;
         next();
       } catch (refreshError) {
@@ -113,16 +112,15 @@ let isAuthen = async (req, res, next) => {
 };
 
 const authorization = (req, res, next) => {
-  if (req.user.role === 'admin')
-    next();
+  if (req.user.role === "admin") next();
   else {
-    return res.status(401).json({ message: 'You are not authorization' })
+    return res.status(401).json({ message: "You are not authorization" });
   }
-}
+};
 
 module.exports = {
   generateToken,
   isAuthen,
   verifyToken,
-  authorization
-}
+  authorization,
+};
